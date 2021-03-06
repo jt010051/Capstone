@@ -1,0 +1,52 @@
+<h1 class="pt-5">All Songs</h1>
+<h5>Check out all the awesome songs available now!</h5>
+<hr />
+
+<div class="row mb-3">
+  <div class="dropdown col-md-2">
+    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{itemsPP}} items per page
+    </button>
+
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" (click)="setItemsPerPage(5)">5</a>
+      <a class="dropdown-item" (click)="setItemsPerPage(10)">10</a>
+      <a class="dropdown-item" (click)="setItemsPerPage(15)">15</a>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-sm btn-primary mp-0 col-md-1" (click)="addNewSong()" *ngIf="isAdminUser">Add Song</button>
+
+  <div class="col-md-4 offset-md-5">
+    <input id="search" type="text" class="form-control bg-light" name="songTitle" [(ngModel)]="songTitle" (ngModelChange)="Search()" placeholder="&#x266C; Search your favorite song &#x266B;" size="4">
+  </div>
+
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th (click)="sort('title')">Title&nbsp;<fa-icon [icon]="faSort"></fa-icon></th>
+      <th (click)="sort('artist')">Artist&nbsp;<fa-icon [icon]="faSort"></fa-icon></th>
+      <th (click)="sort('price')">Price &nbsp;<fa-icon [icon]="faSort"></fa-icon></th>
+      <th (click)="sort('quantity')">Quantity&nbsp;<fa-icon [icon]="faSort"></fa-icon></th>
+      <th (click)="sort('category')">Category&nbsp;<fa-icon [icon]="faSort"></fa-icon></th>
+      <th>Action(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let song of songs | orderBy: key: reverse |  paginate: {itemsPerPage:itemsPP,currentPage:p};">
+      <td>{{song.title}}</td>
+      <td>{{song.artist}}</td>
+      <td>{{song.price}}</td>
+      <td>{{song.quantity}}</td>
+      <td>{{song.genre.genre}}</td>
+      <td class="d-flex px-0">
+        <a (click)="addSongToCart(song)"><fa-icon [icon]="faCart" class="mx-2"></fa-icon></a>
+        <a (click)="editSong(song.id)"><fa-icon [icon]="faEdit" class="mx-2" *ngIf="isAdminUser"></fa-icon></a>
+        <a (click)="deleteSong(song.id)" ><fa-icon [icon]="faTrash" class="mx-2" *ngIf="isAdminUser"></fa-icon></a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<pagination-controls class="text-right" (pageChange)="p = $event"></pagination-controls>
+<app-edit-song *ngIf="action === 'edit'" [song]="selectedSong" (dataChangedEvent)="ngOnInit()"></app-edit-song>
